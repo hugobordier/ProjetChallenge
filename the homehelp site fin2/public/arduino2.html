@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch Processing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.serialport/0.5.3/p5.serialport.min.js"></script>
+</head>
+<body>
+    <h1>Mon Sketch Processing</h1>
+    <script>
+        let logo;
+        let cp5;
+        let patientName = "John Doe"; // Exemple de données de patient
+        let patientAge = 30; // Exemple de données de patient
+        let myPort;
+        let myString;
+        let forceData = [];
+        let breathData = [];
+        let currentIndex = 0;
+        let measuring = false;
+        let measureStartTime;
+        let temps = [];
+        let show = [];
+        let seriesCount = 0;
+
+        function preload() {
+            logo = loadImage("logopc.jpg");
+        }
+
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            
+            // Ajout des boutons et zones de texte
+            let startButton = createButton('Débuter');
+            startButton.position(width / 2 - 150, height - 50);
+            startButton.mousePressed(startMeasurement);
+
+            let resetButton = createButton('Relancer');
+            resetButton.position(width / 2 - 50, height - 50);
+            resetButton.mousePressed(resetMeasurement);
+
+            let endButton = createButton('Terminer');
+            endButton.position(width / 2 + 50, height - 50);
+            endButton.mousePressed(endSession);
+
+            // Ajout des informations patient
+            createDiv("Nom: " + patientName + "<br>Âge: " + patientAge)
+                .position(10, 10)
+                .style('font-size', '20px')
+                .style('background-color', '#E0F7FA')
+                .style('color', '#00BCD4')
+                .style('padding', '10px');
+
+            // Carré session précédente
+            createDiv("Force Max: -<br>Force Moy: -<br>Souffle Max: -<br>Souffle Moy: -<br>Nombre de Séries: -")
+                .id('previousTest')
+                .position(width - 310, 10)
+                .style('font-size', '20px')
+                .style('background-color', '#E0F7FA')
+                .style('color', '#00BCD4')
+                .style('padding', '10px')
+                .style('width', '300px')
+                .style('height', '150px');
+
+            // Carré session en cours
+            createDiv("Force Max: -<br>Force Moy: -<br>Souffle Max: -<br>Souffle Moy: -")
+                .id('currentResults')
+                .position(10, height - 110)
+                .style('font-size', '20px')
+                .style('background-color', '#E0F7FA')
+                .style('color', '#00BCD4')
+                .style('padding', '10px')
+                .style('width', '250px')
+                .style('height', '100px');
+
+            // Initialisation du port série pour le capteur de température
+            myPort = new p5.SerialPort();
+            myPort.open('/dev/tty.usbmodem1411'); // Assurez-vous d'utiliser le bon port série
+            myPort.on('data', serialEvent);
+
+            colorMode(HSB, 360, 100, 100);
+        }
+
+        function draw() {
+            background(255);
+
+            image(logo, width / 2 - 100, 10);
+
+            if (measuring) {
+                let elapsedTime = millis() - measureStartTime;
+                if (elapsedTime > 10000 || currentIndex >= 1000) {
+                    measuring = false;
+                    calculateResults();
+                } else {
+                    // Simulate data collection
+                    forceData[currentIndex] = random(0, 100);
+                    breathData[currentIndex] = random(0, 100);
+                    currentIndex++;
+                }
+            }
+
+            drawGraphs();
+        }
+
+        function drawGraphs() {
+            let margin = 50;
+            let graphWidth = (width - 300) / 3;
+            let graphHeight = 500 - 2 * margin;
+
+            // Courbe Serrage
+            fill('#018975');
+            rectMode(CENTER);
+            rect((width / 2), (height / 2), graphWidth, graphHeight);
+
+            stroke(0);
+            line(margin + graphWidth + 105, (height / 2) + (graphHeight / 2) - 5, margin + 2 * graphWidth + 95, (height / 2) + (graphHeight / 2) - 5);
+            line(margin + graphWidth + 105, (height / 2) + (graphHeight / 2) - 5, margin + graphWidth + 105, (height / 2) - (graphHeight / 2) + 5);
+
+            stroke('#00BCD4');
+            noFill();
+            beginShape();
+            for (let i = 0; i < currentIndex; i++) {
+                let x = map(i, 0, 1000, margin + graphWidth + 105, margin + 2 * graphWidth + 95);
+                let y = map(forceData[i], 0, 100, (height / 2) + (graphHeight / 2) - 5, (height / 2) - (graphHeight / 2) + 5);
+                vertex(x, y);
+            }
+            endShape();
+
+            fill(0);
+            textAlign(CENTER);
+            for (let i = 0; i < 1000; i = i + 300) {
+                let x = map(i, 0, 999, margin + graphWidth + 105, margin + 2 * graphWidth + 95);
+                text(i, x, (height / 2) + (graphHeight / 2) + 30);
+            }
+
+            for (let i = 0; i <= 100; i += 20) {
+                let y = map(i, 0, 100, (height / 2) + (graphHeight / 2) - 5, (height / 2) - (graphHeight / 2) + 5);
+                textAlign(RIGHT);
+                text(i, margin + graphWidth + 95, y + 5);
+            }
+
+            // Courbe souffle
+            fill('#02D4DE');
+            rectMode(CENTER);
+            rect((graphWidth / 2) + margin, (height / 2), graphWidth, graphHeight);
+
+            stroke(0);
+            line(margin + 5, (height / 2) + (graphHeight / 2) - 5, graphWidth + margin - 5, (height / 2) + (graphHeight / 2) - 5);
+            line(margin + 5, (height / 2) + (graphHeight / 2) - 5, margin + 5, (height / 2) - (graphHeight / 2) + 5);
+
+            stroke('#009688');
+            noFill();
+            beginShape();
+            for (let i = 0; i < currentIndex; i++) {
+                let x = map(i, 0, 999, margin + 5, graphWidth + margin - 5);
+                let y = map(breathData[i], 0, 100, (height / 2) + (graphHeight / 2) - 5, (height / 2) - (graphHeight / 2) + 5);
+                vertex(x, y);
+            }
+            endShape();
+
+            fill(0);
+            textAlign(CENTER);
+            for (let i = 0; i < 1000; i = i + 300) {
+                let x = map(i, 0, 999, margin + 5, graphWidth + margin - 5);
+                text(i, x, (height / 2) + (graphHeight / 2) + 30);
+            }
+
+            for (let i = 0; i <= 100; i += 20) {
+                let y = map(i, 0, 100, (height / 2) + (graphHeight / 2) - 5, (height / 2) - (graphHeight / 2) + 5);
+                textAlign(RIGHT);
+                text(i, margin - 5, y + 5);
+            }
+        }
+
+        function serialEvent() {
+            let inData = myPort.readStringUntil('\n');
+            if (inData) {
+                let splitString = splitTokens(inData, ",");
+
+                if (splitString.length == 64) {
+                    for (let q = 0; q < 64; q++) {
+                        let split = float(splitString[q]);
+                        show[q] = split;
+
+                        if (split >= 28.5) {
+                            temps[q] = map(split, 28.5, 35, 30, 0);
+                        } else if (split >= 27.50 && split <= 28.2) {
+                            temps[q] = map(split, 27.50, 28.2, 60, 30);
+                        } else if (split >= 25.9 && split <= 27.3) {
+                            temps[q] = map(split, 25.9, 27.3, 120, 60);
+                        } else if (split >= 23.7 && split <= 25.7) {
+                            temps[q] = map(split, 23.7, 25.7, 180, 120);
+                        } else if (split >= 19.2 && split <= 23.5) {
+                            temps[q] = map(split, 19.2, 23.5, 240, 180);
+                        } else if (split <= 19) {
+                            temps[q] = map(split, 10, 19, 360, 240);
+                        }
+                    }
+                }
+            }
+        }
+
+        function startMeasurement() {
+            if (!measuring) {
+                measuring = true;
+                measureStartTime = millis();
+                currentIndex = 0;
+                forceData = [];
+                breathData = [];
+            }
+        }
+
+        function resetMeasurement() {
+            measuring = false;
+            currentIndex = 0;
+            forceData = [];
+            breathData = [];
+            select('#currentResults').html("Force Max: -<br>Force Moy: -<br>Souffle Max: -<br>Souffle Moy: -");
+        }
+
+        function endSession() {
+            calculateResults();
+        }
+
+        function calculateResults() {
+            let maxForce = 0;
+            let sumForce = 0;
+            let maxBreath = 0;
+            let sumBreath = 0;
+
+            for (let i = 0; i < currentIndex; i++) {
+                if (forceData[i] > maxForce) maxForce = forceData[i];
+                if (breathData[i] > maxBreath) maxBreath = breathData[i];
+                sumForce += forceData[i];
+                sumBreath += breathData[i];
+            }
+
+            let avgForce = sumForce / currentIndex;
+            let avgBreath = sumBreath / currentIndex;
+
+            seriesCount++;
+            
+            select('#currentResults').html(
+                "Force Max: " + maxForce + "<br>" +
+                "Force Moy: " + avgForce + "<br>" +
+                "Souffle Max: " + maxBreath + "<br>" +
+                "Souffle Moy: " + avgBreath
+            );
+
+            select('#previousTest').html(
+                "Force Max: " + maxForce + "<br>" +
+                "Force Moy: " + avgForce + "<br>" +
+                "Souffle Max: " + maxBreath + "<br>" +
+                "Souffle Moy: " + avgBreath + "<br>" +
+                "Nombre de Séries: " + seriesCount
+            );
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Activité dessin</title>
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="niveau3dessin.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    
+    
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": ""
+}</script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="dessin">
+    <meta property="og:type" content="website">
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
+
+<!-- titre section webcam et image-->
+<section class="drawing-activity-name">
+    <img src="images/dessinicone.png" width="100" height="100" class="logo">
+    <div class="drawing-activity-name-titre" id="titre">Activité de dessin</div>
+</section>
+
+<!-- Section webcam et image-->
+<div class="container">
+    <!-- Section image-->
+    <div class="left-column">
+        <div class="left-text">Reproduisez ce dessin!</div>
+        <img id="image-to-show" src="" style="max-width: 100%; max-height: 200px;">
+    </div>
+    <!-- Section webcam-->
+    <div class="right-column">
+        <div class="right-text">Voici votre dessin</div>
+        <div id="webcam-container"></div>
+        <!-- bouton j'ai fini -->
+        <div class="button-container">
+            <button id="finishButton" class="finish" onclick="handleFinish()">J'ai fini</button>
+        </div>
+    </div>
+</div>
+
+<!-- Section bouton fin-->
+<div class="result-container">
+    <div id="resultMessage"></div>
+    <div class="button-container">
+        <button id="nextButton" class="next">Prochain</button>
+        <button id="quitButton" class="quit" onclick="redirectWithId(`Accueil`)">Quitter l'exercice</button>
+    </div>
+</div>
+
+<!-- Section resultats-->
+<section class="drawing-activity-resultats">
+    <div class="drawing-activity-resultats-title" id="titre">Résultats</div>
+    <div id="bon-progress-bar-container" class="progress-bar-container"></div>
+    <div id="resultContainer" class="result-container"></div>
+</section>
+
+<!-- Code teachable machine-->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@latest/dist/teachablemachine-image.min.js"></script>
+<script type="text/javascript">
+        
+        const modelURLs = [
+          "https://teachablemachine.withgoogle.com/models/FbeUHci0z/",
+          "https://teachablemachine.withgoogle.com/models/VCieeqaQ5/",
+          "https://teachablemachine.withgoogle.com/models/-2UDQQB25/"
+          
+        ];
+
+        const modelNames = [
+          "étoile",
+          "sapin",
+          "diamant"
+        ];
+
+        const modelImages = {
+          "https://teachablemachine.withgoogle.com/models/FbeUHci0z/": "imageniveau3/étoile.jpg",
+          "https://teachablemachine.withgoogle.com/models/VCieeqaQ5/": "imageniveau3/sapin1.gif",
+          "https://teachablemachine.withgoogle.com/models/-2UDQQB25/": "imageniveau3/diamant.png"
+          
+        };
+
+        let model, maxPredictions, webcam;
+        let currentModelIndex = 0; // Initialise à 0 pour le premier modèle
+
+        let isHandleFinishRunning = false; // Variable d'état pour gérer l'état d'exécution de handleFinish
+
+        // Fonction pour nettoyer les éléments de la page
+        function clearPage() {
+            if (webcam) {
+                webcam.stop(); // Arrêter la webcam
+            }
+            document.getElementById("webcam-container").innerHTML = "";
+            document.getElementById("image-to-show").src = "";
+            document.getElementById("resultContainer").innerHTML = "";
+            document.getElementById("bon-progress-bar-container").innerHTML = "";
+        }
+
+        // Fonction pour charger le modèle et mettre à jour l'interface utilisateur
+        async function loadModel(url) {
+            
+            clearPage();
+
+            // Charger le modèle Teachable Machine
+            const modelURL = url + "model.json";
+            const metadataURL = url + "metadata.json";
+            model = await tmImage.load(modelURL, metadataURL);
+            maxPredictions = model.getTotalClasses();
+
+            // Charger l'image correspondante
+            const selectedImageURL = modelImages[url];
+            document.getElementById("image-to-show").src = selectedImageURL;
+
+            // Setup webcam
+            const flip = true;
+            webcam = new tmImage.Webcam(200, 200, flip);
+            await webcam.setup();
+            await webcam.play();
+            window.requestAnimationFrame(loop);
+
+            // Append webcam canvas to the DOM
+            document.getElementById("webcam-container").appendChild(webcam.canvas);
+        }
+
+        // Fonction de boucle pour la mise à jour de la webcam
+        async function loop() {
+            webcam.update();
+            window.requestAnimationFrame(loop);
+        }
+
+        // Fonction pour capturer l'image de la webcam
+        function captureWebcamImage() {
+            return webcam.canvas.toDataURL('image/png');
+        }
+
+        // Fonction pour effectuer la prédiction avec l'image capturée
+        async function predict(imageDataURL) {
+            const image = new Image();
+            image.src = imageDataURL;
+            image.onload = async () => {
+                const prediction = await model.predict(image);
+                displayResults(prediction);
+                sendResultsToServer(prediction);
+                console.log("test");
+            }
+        }
+
+        // Fonction pour afficher les résultats de la prédiction
+        function displayResults(prediction) {
+            for (let i = 0; i < maxPredictions; i++) {
+                if (prediction[i].className === "bon") {
+                    const probability = prediction[i].probability * 100;
+                    const bonProgressBarContainer = document.getElementById("bon-progress-bar-container");
+                    bonProgressBarContainer.innerHTML = "";
+
+                    const bonProgressBar = document.createElement("progress");
+                    bonProgressBar.max = 100;
+                    bonProgressBar.value = probability;
+
+                    const bonProgressText = document.createElement("span");
+                    bonProgressText.textContent = `${probability.toFixed(1)}%`;
+
+                    bonProgressBarContainer.appendChild(bonProgressBar);
+                    bonProgressBarContainer.appendChild(bonProgressText);
+
+                    const resultContainer = document.getElementById("resultContainer");
+                    resultContainer.innerHTML = "";
+
+                    let resultText = "";
+
+                    if (probability > 90) {
+                        resultText = "Excellent travail ! Vous avez bien réussi.";
+                    } else if (probability > 60) {
+                        resultText = "Bon travail ! Vous pouvez encore vous améliorer.";
+                    } else {
+                        resultText = "Continuez à vous entraîner pour améliorer vos compétences.";
+                    }
+
+                    const resultMessage = document.createElement("div");
+                    resultMessage.textContent = resultText;
+                    resultContainer.appendChild(resultMessage);
+
+                    break;
+                }
+            }
+        }
+
+        // Fonction pour envoyer les résultats au serveur
+        function sendResultsToServer(prediction) {
+            const dessinPourcentage = (prediction.find(p => p.className === "bon").probability * 100).toFixed(1);
+            const dessinNom = modelNames[currentModelIndex];
+            console.log("dessinNom");
+
+            fetch('http://172.20.10.9:3000/dessin/' + 1, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    dessin_pourcentage: dessinPourcentage,
+                    dessin_nom: dessinNom,
+                    dessin_niveau: "3"
+                })
+            })
+            .then(response => {
+                console.log(response);
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la requête.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data.message); // log the success message
+                // You can handle success as per your requirements, like showing a success message to the user.
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                // You can handle errors as per your requirements, like showing an error message to the user.
+            });
+        }
+
+
+        // Fonction pour gérer le clic sur le bouton "J'ai fini"
+        async function handleFinish() {
+            if (isHandleFinishRunning) return; // Ne rien faire si la fonction est déjà en cours d'exécution
+            isHandleFinishRunning = true; // Indiquer que la fonction est en cours d'exécution
+
+            console.log("handleFinish called");
+            const capturedImageDataURL = captureWebcamImage();
+            await predict(capturedImageDataURL);
+
+            isHandleFinishRunning = false; // Réinitialiser l'état une fois l'exécution terminée
+        }
+
+        // Fonction pour passer au modèle suivant dans la liste
+        async function nextModel() {
+            currentModelIndex = (currentModelIndex + 1) % modelURLs.length;
+            localStorage.setItem('selectedModelIndex', currentModelIndex);
+            await loadModel(modelURLs[currentModelIndex]);
+        }
+
+        // Fonction pour gérer les événements de touche
+        function handleKeyDown(event) {
+            switch (event.key) {
+                case 'ArrowRight': // touche "flèche droite" pour le bouton "Prochain"
+                    nextModel();
+                    event.preventDefault();
+                    break;
+                case 'Enter': // touche "Entrer" pour le bouton "J'ai fini"
+                    handleFinish();
+                    event.preventDefault();
+                    break;
+                case 'Escape': // touche "Échapper" pour le bouton "Quitter"
+                    handleQuit();
+                    event.preventDefault();
+                    break;
+            }
+        }
+        
+        // Ajouter l'écouteur d'événements pour les touches du clavier
+        document.addEventListener('keydown', handleKeyDown);
+
+        // Fonction d'initialisation des écouteurs d'événements pour les boutons
+        function initButtonListeners() {
+            document.getElementById("nextButton").addEventListener("click", nextModel);
+            document.getElementById("finishButton").addEventListener("click", handleFinish);
+            document.getElementById("quitButton").addEventListener("click", handleQuit);
+        }
+
+        // Fonction d'initialisation
+        async function init() {
+            const savedIndex = localStorage.getItem('selectedModelIndex');
+            currentModelIndex = savedIndex ? parseInt(savedIndex) : 0;
+            await loadModel(modelURLs[currentModelIndex]);
+            initButtonListeners();
+        }
+
+        function redirectWithId(str) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('id');
+    
+            const redirectUrl = `${str}.html?id=${userId}`;
+    
+            window.location.href = redirectUrl;
+        }
+
+        // Initialiser l'application
+        init();
+
+    </script>
+</body>
+</html>
+

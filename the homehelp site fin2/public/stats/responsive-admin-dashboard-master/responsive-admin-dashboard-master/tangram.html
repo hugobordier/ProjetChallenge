@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>statistiques</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+  </head>
+  <body>
+    <div class="grid-container">
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined">inventory</span> STATISTIQUES
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item" onclick="redirectWithId('dessin')">
+              <span class="material-icons-outlined">edit</span> Dessin
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('temperature')">
+              <span class="material-icons-outlined">thermostat</span> Température
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('serrage')">
+              <span class="material-icons-outlined">handshake</span> Serrage
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('posture')">
+              <span class="material-icons-outlined">accessibility</span> Posture 
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('audio')">
+              <span class="material-icons-outlined">headphones</span> Audio
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('tangram')">
+              <span class="material-icons-outlined">casino</span> Tangram
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('flux')">
+            <span class="material-icons-outlined">air</span> Flux
+        </li>
+          <li class="sidebar-list-item" onclick="redirectAtAccueil()">
+              <span class="material-icons-outlined">undo</span> Retour a l'accueil
+          </li>
+        </ul>
+      </aside>
+      <!-- End Sidebar -->
+
+      <!-- Main -->
+      <main class="main-container">
+        <div class="main-title">
+          <p class="font-weight-bold">STATISTIQUES</p>
+          <div class="midle" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>            
+          </div>
+        </div>
+
+        <div class="main-cards">
+
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Moyenne score tangram niv.1</p>
+            </div>
+            <span id="average-score1" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Moyenne score tangram niv.2</p>
+            </div>
+            <span id="average-score2" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Moyenne score tangram niv.3</p>
+            </div>
+            <span id="average-score3" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Score Du Dernier Test</p>
+            </div>
+            <span id="average-score-all" class="text-primary font-weight-bold">Loading</span>
+          </div>
+
+        </div>
+
+        <div class="charts">
+
+          <div class="charts-card">
+            <p class="chart-title">Top 5 Score Tangram</p>
+            <div id="bar-chart"></div>
+          </div>
+
+          <div class="charts-card">
+            <p class="chart-title">Derniers résultats</p>
+            <div id="area-chart"></div>
+          </div>
+
+        </div>
+      </main>
+      <!-- End Main -->
+
+    </div>
+
+    <!-- Scripts -->
+    <!-- ApexCharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+      function redirectWithId(str) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        const redirectUrl = `${str}.html?id=${userId}`;
+        window.location.href = redirectUrl;
+    }
+
+    // SIDEBAR TOGGLE
+    let sidebarOpen = false;
+    const sidebar = document.getElementById('sidebar');
+
+    function openSidebar() {
+      if (!sidebarOpen) {
+        sidebar.classList.add('sidebar-responsive');
+        sidebarOpen = true;
+      }
+    }
+
+    function closeSidebar() {
+      if (sidebarOpen) {
+        sidebar.classList.remove('sidebar-responsive');
+        sidebarOpen = false;
+      }
+    }
+
+    async function fetchData(url) {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        return await response.json();
+      } else {
+        alert('Erreur lors de la récupération des données.');
+        return null;
+      }
+    }
+
+    function calculateAverage(drawings, level) {
+      const levelDrawings = drawings.filter(d => d.tangram_niveau === level);
+      if (levelDrawings.length === 0) return null;
+
+      let total = 0;
+      for (let i = 0; i < levelDrawings.length; i++) {
+        total += levelDrawings[i].tangram_pourcentage;
+      }
+      return total / levelDrawings.length;
+    }
+
+    function calculateOverallAverage(drawings) {
+      if (drawings.length === 0) return null;
+      let total = 0;
+      for (let i = 0; i < drawings.length; i++) {
+        total += drawings[i].tangram_pourcentage;
+      }
+      return total / drawings.length;
+    }
+
+    function calculateTop5(drawings) {
+      const sortedDrawings = drawings.sort((a, b) => b.tangram_pourcentage - a.tangram_pourcentage);
+      const top5Drawings = sortedDrawings.slice(0, 5);
+      return top5Drawings;
+    }
+
+    function prepareChartData(drawings) {
+      const sortedDrawings = drawings.sort((a, b) => new Date(a.tangram_date) - new Date(b.tangram_date));
+      const dates = sortedDrawings.map(d => new Date(d.tangram_date).toLocaleDateString());
+      const percentages = sortedDrawings.map(d => d.tangram_pourcentage);
+
+      return { dates, percentages };
+    }
+
+function lastScore(data){
+  if(data.length === 0) {
+    return null;
+  }
+  console.log(data[data.length - 1].tangram_pourcentage);
+  return data[data.length - 1].tangram_pourcentage;
+}
+
+    async function displayAverages() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('id');
+      const url = 'http://172.20.10.9:3000/tangram/' + userId;
+      const data = await fetchData(url);
+
+      if (data) {
+        const average1 = calculateAverage(data, 1);
+        const average2 = calculateAverage(data, 2);
+        const average3 = calculateAverage(data, 3);
+        const overallAverage = lastScore(data);
+
+        document.getElementById('average-score1').textContent = average1 !== null ? average1.toFixed(2) : 'Pas de test passé';
+        document.getElementById('average-score2').textContent = average2 !== null ? average2.toFixed(2) : 'Pas de test passé';
+        document.getElementById('average-score3').textContent = average3 !== null ? average3.toFixed(2) : 'Pas de test passé';
+        document.getElementById('average-score-all').textContent = overallAverage !== null ? overallAverage.toFixed(2) : 'Pas de test passé';
+
+        // Calculate top 5 drawings
+        const top5Drawings = calculateTop5(data);
+        const top5Categories = top5Drawings.map(d => `${d.tangram_nom}\nNiveau ${d.tangram_niveau}\n${new Date(d.tangram_date).toLocaleDateString()}`);
+        const top5Percentages = top5Drawings.map(d => d.tangram_pourcentage);
+
+        // Update the bar chart
+        updateBarChart(top5Categories, top5Percentages);
+
+        // Prepare data for the area chart
+        const { dates, percentages } = prepareChartData(data);
+        updateAreaChart(dates, percentages);
+      }
+    }
+
+    function updateBarChart(names, percentages) {
+  const barChartOptions = {
+    series: [
+      {
+        data: percentages,
+      },
+    ],
+    chart: {
+      type: 'bar',
+      height: 350,
+      toolbar: {
+        show: false,
+      },
+    },
+    colors: ['#246dec', '#cc3c43', '#367952', '#f5b74f', '#4f35a1'],
+    plotOptions: {
+      bar: {
+        distributed: true,
+        borderRadius: 4,
+        horizontal: false,
+        columnWidth: '40%',
+      },
+    },
+    dataLabels: {
+      enabled: true,
+    },
+    legend: {
+      show: false,
+    },
+    xaxis: {
+      categories: names,
+      labels: {
+        style: {
+          fontSize: '12px',
+          fontWeight: 'bold',
+          whiteSpace: 'pre-line', // Use pre-line to handle line breaks
+        },
+      },
+    },
+    yaxis: {
+      title: {
+        text: 'Score',
+      },
+      min: 0,
+      max: 100,
+    },
+  };
+
+  const barChart = new ApexCharts(
+    document.querySelector('#bar-chart'),
+    barChartOptions
+  );
+  barChart.render();
+}
+
+    function updateAreaChart(categories, seriesData) {
+      var options = {
+        series: [{
+          name: "Tangram Scores",
+          data: seriesData
+        }],
+        chart: {
+          type: 'area',
+          height: 350,
+          toolbar: {
+            show: true,
+          },
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: categories,
+        },
+        yaxis: {
+      title: {
+        text: 'Score',
+      },
+      min: 0,
+      max: 100,
+    }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#area-chart"), options);
+      chart.render();
+    }
+
+    // Call the function to display averages when the page loads
+    window.onload = displayAverages;
+
+    async function redirectAtAccueil() {
+  const url = 'http://172.20.10.9:3000/user'; // URL de l'API, à changer selon votre configuration
+  const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+          'Content-Type': 'application/json'
+      }
+  });
+
+  if (response.ok) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = urlParams.get('id');
+      const users = await response.json();
+      const user = users.find(u => u.user_id == userId);
+
+      if (user) {
+          window.location.href = `http://localhost:3001/Accueil.html?nom=${encodeURIComponent(user.user_name)}&prenom=${encodeURIComponent(user.user_prenom)}&id=${encodeURIComponent(user.user_id)}`;
+      } else {
+          alert('Erreur : email ou mot de passe incorrect.');
+      }
+  } else {
+      alert('Erreur lors de la récupération des données de user.');
+  }
+}
+    </script>
+  </body>
+</html>

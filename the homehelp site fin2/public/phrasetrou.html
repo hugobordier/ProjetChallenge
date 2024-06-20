@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Phrases à trous</title>
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="phrasetrou.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    
+    
+    <script type="application/ld+json">{
+        "@context": "http://schema.org",
+        "@type": "Organization",
+        "name": ""
+}</script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Phrases à trous">
+    <meta property="og:type" content="website">
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body>
+    <section class="drawing-activity-name">
+        <img src="images/cognitif.png" width="100" height="100" class="logo">
+        <div class="drawing-activity-name-titre" id="titre">Activité cognitive </div>
+    </section>
+    <div class="container">
+        <div class="regle" id="regle">Complétez la phrase avec le mot qui convient. </div>
+        <div class="sentence" id="sentence"></div>
+        <div class="options" id="options"></div>
+        <div class="result" id="result"></div>
+        <button id="repeatButton" onclick="repeatSentence()">Répéter</button>
+        <button id="nextButton" onclick="loadNextSentence()">Prochain</button>
+    </div>
+    <button id="quitButton" onclick="redirectWithId(`Accueil`)">Quitter</button>
+
+
+    <script>
+        const sentences = [
+            {
+                textToRead: "Le chat mange court ou dort sur le canapé? Choisis la bonne réponse.",
+                textToDisplay: "Le chat ______ sur le canapé.",
+                correct: "dort",
+                options: ["mange", "court", "dort"]
+        
+            },
+            {
+                textToRead: "La voiture vole nage ou roule vite? Choisis la bonne réponse.",
+                textToDisplay: "La voiture ______ vite. ",
+                correct: "roule",
+                options: ["vole", "nage", "roule"]
+            },
+            {
+                textToRead: "Le soleil tombe brille ou pleut dans le ciel? Choisis la bonne réponse.",
+                textToDisplay: "Le soleil ______ dans le ciel. ",
+                correct: "brille",
+                options: ["tombe", "brille", "pleut"]
+            },
+            {
+                textToRead: "La Mamie de Léa lui a offert un état d'âme un livre ou un arbre pour son anniversaire? Choisis la bonne réponse.",
+                textToDisplay: "La Mamie de Léa lui a offert un ______ pour son anniversaire. ",
+                correct: "livre",
+                options: ["etat d’âme", "livre", "arbre"]
+            },
+            {
+                textToRead:  "La boulangère va lui donner le bouquet le poisson ou le gâteau qu’elle a commandée? Choisis la bonne réponse.",
+                textToDisplay: "La boulangère va lui donner le ______ qu’elle a commandée. ",
+                correct: "gâteau",
+                options: ["bouquet", "poisson", "gâteau"]
+            },
+            {
+                textToRead:  "Ce menu gastronomique met l’eau à la douche à la bouche ou en haleine?Choisis la bonne réponse.",
+                textToDisplay:"Ce menu gastronomique met l’eau ______",
+                correct: "a la bouche",
+                options: ["a la douche", "a la bouche", "en haleine"]
+            },
+            {
+                textToRead:  "La fleuriste du coin est à la recherche d’un nouveau bocal local ou jovial pour confectionner avec soin ses bouquets?Choisis la bonne réponse.",
+                textToDisplay:"La fleuriste du coin est à la recherche d’un nouveau ______ pour confectionner avec soin ses bouquets.",
+                correct: "local",
+                options: ["bocal ", "local", "jovial"]
+            },
+            {
+                textToRead: "Chloé est passionnée d’excursions en fôret en appartement ou en caractère?Choisis la bonne réponse.",
+                textToDisplay: "Chloé est passionnée d’excursions en ______",
+                correct: "forêt",
+                options: ["forêt", "appartement", "caractère"]
+            },
+            {
+                textToRead: " L’institutrice lui a donné un nouveau cahier car il n’avait plus de place pour s'asseoir s'assumer ou s'ecrire?Choisis la bonne réponse. ",
+                textToDisplay: " L’institutrice lui a donné un nouveau cahier car il n’avait plus de place pour ______",
+                correct: "s’asseoir",
+                options: ["s’asseoir", "assumer", "ecrire"]
+            }
+           
+        ];
+
+        let currentSentenceIndex = 0;
+        let lastSpokenSentence = '';
+
+        function loadSentence(index) {
+            const sentenceData = sentences[index];
+            const sentenceElement = document.getElementById('sentence');
+            const optionsElement = document.getElementById('options');
+            const resultElement = document.getElementById('result');
+
+            // Afficher le texte à afficher sur la page web
+            sentenceElement.textContent = sentenceData.textToDisplay;
+
+            // Afficher les boutons d'options
+            optionsElement.innerHTML = '';
+            sentenceData.options.forEach((option, i) => {
+                const button = document.createElement('button');
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option);
+                button.id = `option${i + 1}`;
+                optionsElement.appendChild(button);
+            });
+
+            resultElement.innerHTML = '';
+
+            // Lire le texte à voix haute
+            const sentenceToSpeak = sentenceData.textToRead;
+            const sentenceToSpeakWithPause = sentenceToSpeak.replace("**PAUSE**", ", pause"); // Remplacer **PAUSE** par une pause
+            lastSpokenSentence = sentenceToSpeakWithPause;
+            speakSentence(sentenceToSpeakWithPause);
+        }
+
+        function displayResult(result) {
+            const resultElement = document.getElementById('result');
+            resultElement.innerHTML = result;
+
+            // Lire le résultat à voix haute
+            const resultToSpeak = "Résultat: " + result;
+            lastSpokenSentence = resultToSpeak;
+            speakSentence(resultToSpeak);
+        }
+
+        function checkAnswer(selectedOption) {
+            const sentenceData = sentences[currentSentenceIndex];
+            const resultElement = document.getElementById('result');
+
+            if (selectedOption === sentenceData.correct) {
+                resultElement.innerHTML = "<span style='color: green;'>Correct!</span>";
+                speakSentence("Correct!");
+            } else {
+                const resultMessage = `<span style='color: red;'>Faux! La bonne réponse est: "${sentenceData.correct}".</span>`;
+                resultElement.innerHTML = resultMessage;
+                speakSentence("Faux! La bonne réponse est: " + sentenceData.correct + ".");
+            }
+        }
+
+        function speakSentence(sentence) {
+            const speech = new SpeechSynthesisUtterance();
+            speech.text = sentence;
+            window.speechSynthesis.speak(speech);
+        }
+
+        function repeatSentence() {
+            speakSentence(lastSpokenSentence);
+        }
+
+        function loadNextSentence() {
+            currentSentenceIndex = (currentSentenceIndex + 1) % sentences.length;
+            loadSentence(currentSentenceIndex);
+        }
+
+        function handleQuit() {
+            window.location.href = 'Accueil.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSentence(currentSentenceIndex);
+
+            // Ajout des gestionnaires d'événements pour les touches du clavier
+            document.addEventListener('keydown', (event) => {
+                switch (event.key) {
+                    case 'Escape':
+                        event.preventDefault(); // Empêcher le comportement par défaut de quitter le mode plein écran
+                        handleQuit();
+                        break;
+                    case 'ArrowRight':
+                        loadNextSentence();
+                        break;
+                    case 'Enter':
+                        repeatSentence();
+                        break;
+                    case '1':
+                        if (sentences[currentSentenceIndex].options[0]) {
+                            checkAnswer(sentences[currentSentenceIndex].options[0]);
+                        }
+                        break;
+                    case '2':
+                        if (sentences[currentSentenceIndex].options[1]) {
+                            checkAnswer(sentences[currentSentenceIndex].options[1]);
+                        }
+                        break;
+                    case '3':
+                        if (sentences[currentSentenceIndex].options[2]) {
+                            checkAnswer(sentences[currentSentenceIndex].options[2]);
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+        });
+
+        function redirectWithId(str) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userId = urlParams.get('id');
+    
+            const redirectUrl = `${str}.html?id=${userId}`;
+    
+            window.location.href = redirectUrl;
+        }
+
+    </script>
+</body>
+</html>

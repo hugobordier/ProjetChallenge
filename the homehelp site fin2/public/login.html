@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html style="font-size: 20px;" lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <title>Login</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="login.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    <meta name="referrer" content="origin">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <link id="u-page-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+</head>
+<body>
+    <section class="sectionname">
+        <div class="titre"> The HomeHelp Start-Up </div>
+    </section>
+    <section class="u-clearfix u-grey-5 u-section-1" id="carousel_c84f">
+        <div class="u-clearfix u-sheet u-sheet-1">
+            <div class="u-expanded-width u-list u-list-1">
+                <div class="identification-container">
+                    <div class="creationcompte">Identification</div>
+                    <form id="loginForm">
+                        <input type="email" id="user_email" name="user_email" placeholder="Email" required>
+                        <div class="password-container">
+                            <input type="password" id="user_password" name="user_password" placeholder="Mot de passe" required>
+                            <span class="toggle-password" id="togglePassword">👁️</span>
+                        </div>
+                        <button type="submit">Valider</button>
+                    </form>
+                </div>
+                <div class="additional-content">
+                    <p>Vous n'avez pas de compte ?</p>
+                    <a onclick="redirectWithId(`register`)" class="register-button">Créer un compte</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <script src="login.js"></script>
+</body>
+<script>
+    function redirectWithId(str) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const userId = urlParams.get('id');
+  
+          const redirectUrl = `${str}.html?id=${userId}`;
+  
+          window.location.href = redirectUrl;
+    }
+
+    const passwordInput = document.getElementById('user_password');
+const togglePassword = document.getElementById('togglePassword');
+
+function togglePasswordVisibility() {
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+    } else {
+        passwordInput.type = 'password';
+    }
+}
+
+
+function handleMouseEvents() {
+    togglePassword.addEventListener('mousedown', () => {
+        if (window.innerWidth >= 500) {
+            passwordInput.type = 'text';
+        }
+    });
+
+    togglePassword.addEventListener('mouseup', () => {
+        if (window.innerWidth >= 500) {
+            passwordInput.type = 'password';
+        }
+    });
+
+    togglePassword.addEventListener('mouseleave', () => {
+        if (window.innerWidth >= 500) {
+            passwordInput.type = 'password';
+        }
+    });
+
+    togglePassword.addEventListener('click', () => {
+        if (window.innerWidth < 500) {
+            togglePasswordVisibility();
+        }
+    });
+}
+
+handleMouseEvents();
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const user_email = document.getElementById('user_email').value;
+    const user_password = document.getElementById('user_password').value;
+
+    const url = 'http://172.20.10.9:3000/user'; // a changer selon le wifi et l'appareil
+    const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (response.ok) {
+        const users = await response.json();
+        const user = users.find(u => u.user_email === user_email && u.user_password === user_password);
+
+        if (user) {
+            window.location.href = `Accueil.html?nom=${encodeURIComponent(user.user_name)}&prenom=${encodeURIComponent(user.user_prenom)}&id=${encodeURIComponent(user.user_id)}`;
+        } else {
+            alert('Erreur : email ou mot de passe incorrect.');
+        }
+    } else {
+        alert('Erreur lors de la récupération des données de user.');
+    }
+});
+
+window.addEventListener('resize', handleMouseEvents);
+  </script>
+</html>

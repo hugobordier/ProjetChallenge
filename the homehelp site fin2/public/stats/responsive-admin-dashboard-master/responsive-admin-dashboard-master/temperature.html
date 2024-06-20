@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Statistiques Température</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+      .grid-container2 {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+          "sidebar header"
+          "sidebar main";
+        height: 100vh;
+      }
+
+      #sidebar {
+        grid-area: sidebar;
+      }
+
+      .main-container {
+        grid-area: main;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+
+      .main-title {
+        grid-area: header;
+        padding: 20px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .main-cards, .charts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .temperature-value {
+        display: flex;
+        align-items: baseline;
+        gap: 2px;
+      }
+
+      .temperature-value span {
+        font-size: 1.2em;
+      }
+
+      .charts-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        min-width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container2">
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined">thermostat</span> STATISTIQUES TEMPÉRATURE
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item" onclick="redirectWithId('dessin')">
+              <span class="material-icons-outlined">edit</span> Dessin
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('temperature')">
+              <span class="material-icons-outlined">thermostat</span> Température
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('serrage')">
+              <span class="material-icons-outlined">handshake</span> Serrage
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('posture')">
+              <span class="material-icons-outlined">accessibility</span> Posture 
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('audio')">
+              <span class="material-icons-outlined">headphones</span> Audio
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('tangram')">
+              <span class="material-icons-outlined">casino</span> Tangram
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('flux')">
+            <span class="material-icons-outlined">air</span> Flux
+          </li>
+          <li class="sidebar-list-item" onclick="redirectAtAccueil()">
+              <span class="material-icons-outlined">undo</span> Retour à l'accueil
+          </li>
+        </ul>
+      </aside>
+      <!-- End Sidebar -->
+
+      <!-- Main -->
+      <main class="main-container">
+        <div class="main-title">
+          <p class="font-weight-bold">STATISTIQUES TEMPÉRATURE</p>
+          <div class="midle" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>            
+          </div>
+        </div>
+
+        <div class="main-cards">
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Moyenne Température (C)</p>
+            </div>
+            <span id="average-temperature" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Dernière Température (C)</p>
+            </div>
+            <span id="last-temperature" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="charts-card">
+            <p class="chart-title">Températures Récentes</p>
+            <div id="area-chart"></div>
+          </div>
+        </div>
+      </main>
+      <!-- End Main -->
+
+    </div>
+
+    <!-- Scripts -->
+    <!-- ApexCharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+      function redirectWithId(str) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        const redirectUrl = `${str}.html?id=${userId}`;
+        window.location.href = redirectUrl;
+      }
+
+      // SIDEBAR TOGGLE
+      let sidebarOpen = false;
+      const sidebar = document.getElementById('sidebar');
+
+      function openSidebar() {
+        if (!sidebarOpen) {
+          sidebar.classList.add('sidebar-responsive');
+          sidebarOpen = true;
+        }
+      }
+
+      function closeSidebar() {
+        if (sidebarOpen) {
+          sidebar.classList.remove('sidebar-responsive');
+          sidebarOpen = false;
+        }
+      }
+
+      async function fetchData(url) {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          return await response.json();
+        } else {
+          alert('Erreur lors de la récupération des données.');
+          return null;
+        }
+      }
+
+      function calculateAverage(temperatures) {
+        if (temperatures.length === 0) return null;
+
+        let total = 0;
+        for (let i = 0; i < temperatures.length; i++) {
+          total += temperatures[i].temperature_valeur;
+        }
+        return total / temperatures.length;
+      }
+
+      function lastTemperature(temperatures) {
+        if (temperatures.length === 0) return null;
+        return temperatures[temperatures.length - 1].temperature_valeur;
+      }
+
+      function prepareChartData(temperatures) {
+        const sortedTemperatures = temperatures.sort((a, b) => new Date(a.temperature_date) - new Date(b.temperature_date));
+        const dates = sortedTemperatures.map(t => new Date(t.temperature_date).toLocaleDateString());
+        const values = sortedTemperatures.map(t => t.temperature_valeur);
+
+        return { dates, values };
+      }
+
+      async function displayAverages() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        const url = 'http://172.20.10.9:3000/temperature/' + userId;
+        const data = await fetchData(url);
+
+        if (data) {
+          const averageTemperature = calculateAverage(data);
+          const lastTemp = lastTemperature(data);
+
+          document.getElementById('average-temperature').textContent = averageTemperature !== null ? averageTemperature.toFixed(2) : 'Pas de température mesurée';
+          document.getElementById('last-temperature').textContent = lastTemp !== null ? lastTemp.toFixed(2) : 'Pas de température mesurée';
+
+          // Prepare data for the area chart
+          const { dates, values } = prepareChartData(data);
+          updateAreaChart(dates, values);
+        }
+      }
+
+      function updateAreaChart(categories, seriesData) {
+        var options = {
+          series: [{
+            name: "Températures",
+            data: seriesData
+          }],
+          chart: {
+            type: 'area',
+            height: 350,
+            toolbar: {
+              show: true,
+            },
+          },
+          dataLabels: {
+            enabled: false
+          },
+          xaxis: {
+            categories: categories,
+          },
+          yaxis: {
+            title: {
+              text: 'Température(C)',
+            },
+            min: 0,
+            max: 100,
+          }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#area-chart"), options);
+        chart.render();
+      }
+
+      // Call the function to display averages when the page loads
+      window.onload = displayAverages;
+
+      async function redirectAtAccueil() {
+        const url = 'http://172.20.10.9:3000/user'; // URL de l'API, à changer selon votre configuration
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const userId = urlParams.get('id');
+          const users = await response.json();
+          const user = users.find(u => u.user_id == userId);
+
+          if (user) {
+            window.location.href = `http://localhost:3001/Accueil.html?nom=${encodeURIComponent(user.user_name)}&prenom=${encodeURIComponent(user.user_prenom)}&id=${encodeURIComponent(user.user_id)}`;
+          } else {
+            alert('Erreur : email ou mot de passe incorrect.');
+          }
+        } else {
+          alert('Erreur lors de la récupération des données de user.');
+        }
+      }
+    </script>
+  </body>
+</html>

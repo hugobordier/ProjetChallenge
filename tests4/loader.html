@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher les Données</title>
+    <style>
+        #loader {
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #3498db;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            display: none;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #data {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Afficher les Données</h1>
+    <div id="loader"></div>
+    <div id="data"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loader = document.getElementById('loader');
+            const dataDiv = document.getElementById('data');
+
+            loader.style.display = 'block';
+
+            fetch('/api/table')
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    dataDiv.style.display = 'block';
+
+                    data.forEach(item => {
+                        const dataItem = document.createElement('div');
+                        dataItem.textContent = `ID: ${item.data_id}, Température: ${item.data_temperature}, Humidité: ${item.data_humidite}, Date: ${item.data_date}`;
+                        dataDiv.appendChild(dataItem);
+                    });
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    dataDiv.style.display = 'block';
+                    dataDiv.textContent = 'Erreur lors de la récupération des données';
+                    console.error('Erreur lors de la récupération des données :', error);
+                });
+        });
+    </script>
+</body>
+</html>

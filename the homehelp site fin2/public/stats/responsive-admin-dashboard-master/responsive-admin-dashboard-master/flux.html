@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Statistiques Flux</title>
+
+    <!-- Montserrat Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+      .grid-container2 {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        grid-template-rows: auto 1fr;
+        grid-template-areas:
+          "sidebar header"
+          "sidebar main";
+        height: 100vh;
+      }
+
+      #sidebar {
+        grid-area: sidebar;
+      }
+
+      .main-container {
+        grid-area: main;
+        padding: 20px;
+        background-color: #f8f9fa;
+      }
+
+      .main-title {
+        grid-area: header;
+        padding: 20px;
+        background-color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      .main-cards, .charts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        min-width: 200px;
+      }
+
+      .temperature-value {
+        display: flex;
+        align-items: baseline;
+        gap: 2px;
+      }
+
+      .temperature-value span {
+        font-size: 1.2em;
+      }
+
+      .charts-card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        flex: 1;
+        min-width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="grid-container2">
+
+      <!-- Sidebar -->
+      <aside id="sidebar">
+        <div class="sidebar-title">
+          <div class="sidebar-brand">
+            <span class="material-icons-outlined">air</span> STATISTIQUES FLUX
+          </div>
+          <span class="material-icons-outlined" onclick="closeSidebar()">close</span>
+        </div>
+
+        <ul class="sidebar-list">
+          <li class="sidebar-list-item" onclick="redirectWithId('dessin')">
+              <span class="material-icons-outlined">edit</span> Dessin
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('temperature')">
+              <span class="material-icons-outlined">thermostat</span> Température
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('serrage')">
+              <span class="material-icons-outlined">handshake</span> Serrage
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('posture')">
+              <span class="material-icons-outlined">accessibility</span> Posture 
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('audio')">
+              <span class="material-icons-outlined">headphones</span> Audio
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('tangram')">
+              <span class="material-icons-outlined">casino</span> Tangram
+          </li>
+          <li class="sidebar-list-item" onclick="redirectWithId('flux')">
+            <span class="material-icons-outlined">air</span> Flux
+          </li>
+          <li class="sidebar-list-item" onclick="redirectAtAccueil()">
+              <span class="material-icons-outlined">undo</span> Retour à l'accueil
+          </li>
+        </ul>
+      </aside>
+      <!-- End Sidebar -->
+
+      <!-- Main -->
+      <main class="main-container">
+        <div class="main-title">
+          <p class="font-weight-bold">STATISTIQUES FLUX</p>
+          <div class="midle" onclick="openSidebar()">
+          <span class="material-icons-outlined">menu</span>            
+          </div>
+        </div>
+
+        <div class="main-cards">
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Taux de Réussite (%)</p>
+            </div>
+            <span id="success-rate" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        
+          <div class="card">
+            <div class="card-inner">
+              <p class="text-primary">Dernière Valeur de Flux</p>
+            </div>
+            <span id="last-flux-value" class="text-primary font-weight-bold">Loading</span>
+          </div>
+        </div>
+
+        <div class="charts">
+          <div class="charts-card">
+            <p class="chart-title">Valeurs Récentes de Flux</p>
+            <div id="area-chart"></div>
+          </div>
+        </div>
+      </main>
+      <!-- End Main -->
+
+    </div>
+
+    <!-- Scripts -->
+    <!-- ApexCharts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.35.3/apexcharts.min.js"></script>
+    <!-- Custom JS -->
+    <script>
+      function redirectWithId(str) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        const redirectUrl = `${str}.html?id=${userId}`;
+        window.location.href = redirectUrl;
+      }
+
+      // SIDEBAR TOGGLE
+      let sidebarOpen = false;
+      const sidebar = document.getElementById('sidebar');
+
+      function openSidebar() {
+        if (!sidebarOpen) {
+          sidebar.classList.add('sidebar-responsive');
+          sidebarOpen = true;
+        }
+      }
+
+      function closeSidebar() {
+        if (sidebarOpen) {
+          sidebar.classList.remove('sidebar-responsive');
+          sidebarOpen = false;
+        }
+      }
+
+      async function fetchData(url) {
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          return await response.json();
+        } else {
+          alert('Erreur lors de la récupération des données.');
+          return null;
+        }
+      }
+
+      function calculateSuccessRate(fluxData) {
+        if (fluxData.length === 0) return null;
+
+        let successCount = 0;
+        fluxData.forEach(item => {
+          if (item.flux_reussi === 1) successCount++;
+        });
+
+        return (successCount / fluxData.length) * 100;
+      }
+
+      function lastFluxValue(fluxData) {
+        if (fluxData.length === 0) return null;
+        return fluxData[fluxData.length - 1].flux_score;
+      }
+
+      function prepareChartData(fluxData) {
+        const sortedFluxData = fluxData.sort((a, b) => new Date(a.flux_date) - new Date(b.flux_date));
+        const dates = sortedFluxData.map(t => new Date(t.flux_date).toLocaleDateString());
+        const values = sortedFluxData.map(t => t.flux_score);
+
+        return { dates, values };
+      }
+
+      async function displayFluxStats() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        const url = 'http://172.20.10.9:3000/flux/' + userId;
+        const data = await fetchData(url);
+
+        if (data) {
+          const successRate = calculateSuccessRate(data);
+          const lastValue = lastFluxValue(data);
+
+          document.getElementById('success-rate').textContent = successRate !== null ? successRate.toFixed(2) : 'Pas de données mesurées';
+          document.getElementById('last-flux-value').textContent = lastValue !== null ? lastValue.toFixed(2) : 'Pas de données mesurées';
+
+          // Prepare data for the area chart
+          const { dates, values } = prepareChartData(data);
+          updateAreaChart(dates, values);
+        }
+      }
+
+      function updateAreaChart(categories, seriesData) {
+        var options = {
+          series: [{
+            name: "Flux Scores",
+            data: seriesData
+          }],
+          chart: {
+            type: 'area',
+            height: 350,
+            toolbar: {
+              show: true,
+            },
+          },
+          dataLabels: {
+            enabled: false
+          },
+          xaxis: {
+            categories: categories,
+          },
+          yaxis: {
+            title: {
+              text: 'Flux Score',
+            },
+            min: 0,
+            max: 100,
+          }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#area-chart"), options);
+        chart.render();
+      }
+
+      // Call the function to display flux stats when the page loads
+      window.onload = displayFluxStats;
+
+      async function redirectAtAccueil() {
+        const url = 'http://172.20.10.9:3000/user'; // URL de l'API, à changer selon votre configuration
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (response.ok) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const userId = urlParams.get('id');
+          const users = await response.json();
+          const user = users.find(u => u.user_id == userId);
+
+          if (user) {
+            window.location.href = `http://localhost:3001/Accueil.html?nom=${encodeURIComponent(user.user_name)}&prenom=${encodeURIComponent(user.user_prenom)}&id=${encodeURIComponent(user.user_id)}`;
+          } else {
+            alert('Erreur : email ou mot de passe incorrect.');
+          }
+        } else {
+          alert('Erreur lors de la récupération des données de user.');
+        }
+      }
+    </script>
+  </body>
+</html>

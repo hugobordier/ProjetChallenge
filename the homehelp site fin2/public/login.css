@@ -1,0 +1,137 @@
+body, html {
+    height: 100%; /* Assure que le corps et le HTML prennent toute la hauteur */
+    margin: 0; /* Supprime les marges par défaut */
+    padding: 0; /* Supprime les paddings par défaut */
+    font-size: 20px; /* Taille de police par défaut pour le corps et le HTML */
+}
+.sectionname {
+    min-height: 50px;
+    background-color: #fff;
+    padding: 5px;
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-between; /* Espace les éléments pour mettre la maison à droite */
+    align-items: center;
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+  
+.titre {
+    font-size: 60px;
+    margin-bottom: 0;
+    color: #00C4CC;
+    font-weight: bold;
+    margin-right: 20px; /* Espace entre le titre et le logo */
+    flex-grow: 1; /* Permet au texte de prendre tout l'espace disponible */
+    text-decoration: none; /* Désactiver le soulignement */
+}
+
+.u-section-1 {
+    min-height: 600px; /* Assure que la section prend au moins toute la hauteur de la vue */
+    display: flex; /* Utilisation de flexbox pour centrer le contenu */
+    justify-content: center; /* Centre horizontalement le contenu */
+    align-items: center; /* Centre verticalement le contenu */
+    background-color: #f0f0f0; /* Couleur de fond si nécessaire */
+    background-image: url('images/fond.jpg'); /* Remplacez par le chemin de votre image */
+    background-size: cover; /* Assure que l'image couvre toute la section */
+    background-position: center; /* Centre l'image dans la section */
+    background-repeat: no-repeat; /* Empêche la répétition de l'image */
+}
+
+.u-sheet-1 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.u-list-1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.identification-container {
+    border: 2px solid #b2dbe0; /* Bordure noire de 2 pixels */
+    padding: 20px; /* Espacement intérieur */
+    text-align: center; /* Centre le texte */
+    width: 100%;
+    max-width: 1000px; /* Largeur maximale pour le conteneur */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre portée */
+    background-color: #b2dbe0; /* Couleur de fond pour le conteneur */
+    border-radius: 10px; /* Bords arrondis de 10px */
+    margin-bottom: 20px; /* Espacement en bas */
+}
+
+.creationcompte {
+    font-size: 65px;
+    margin-bottom: 20px;
+}
+
+.identification-container h2 {
+    margin-bottom: 20px; /* Espacement en bas du titre */
+}
+
+#loginForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#loginForm input,
+#loginForm button {
+    width: 100%; /* Occupe toute la largeur du conteneur */
+    max-width: 300px; /* Largeur maximale des champs */
+    margin: 10px 0; /* Espacement vertical entre les champs */
+}
+
+.password-container {
+    position: relative;
+    width: 100%; /* Occupe toute la largeur du conteneur */
+    max-width: 300px; /* Largeur maximale du conteneur */
+}
+
+.password-container input {
+    width: 100%; /* Occupe toute la largeur du conteneur */
+}
+
+.toggle-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+
+button {
+    width: 100%; /* Occupe toute la largeur du conteneur */
+    max-width: 300px; /* Largeur maximale du bouton */
+}
+
+.additional-content {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 1.2em; /* Taille du texte */
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-button {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1.1em; /* Taille du texte du bouton */
+    color: white;
+    background-color: #007BFF; /* Couleur de fond du bouton */
+    text-decoration: none;
+    border-radius: 5px; /* Coins arrondis */
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.register-button:hover {
+    background-color: #0056b3; /* Couleur de fond du bouton au survol */
+}

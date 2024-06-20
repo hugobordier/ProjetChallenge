@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+<head>
+    <!-- Balises meta pour le design responsive et l'encodage des caractères -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    
+    <!-- Balises meta pour le SEO (actuellement vides) -->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    
+    <!-- Titre de la page -->
+    <title>calendrier</title>
+    
+    <!-- Liens vers des fichiers CSS externes pour le style -->
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="calendrier.css" media="screen">
+    
+    <!-- Fichiers JavaScript à charger après l'analyse du HTML -->
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    
+    <!-- Balise meta pour spécifier le générateur de la page -->
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    
+    <!-- Google Fonts pour des styles de police personnalisés -->
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    
+    <!-- Données structurées pour le SEO -->
+    <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": ""
+    }</script>
+    
+    <!-- Balise meta pour la couleur du thème des navigateurs -->
+    <meta name="theme-color" content="#478ac9">
+    
+    <!-- Balises Open Graph pour le partage sur les réseaux sociaux -->
+    <meta property="og:title" content="calendrier">
+    <meta property="og:type" content="website">
+    
+    <!-- Placeholder pour le plugin d'entrée de téléphone international -->
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
+
+    <!-- titre section webcam et image-->
+<section class="drawing-activity-name">
+    <div class="drawing-activity-name-titre" id="titre">Calendrier </div>
+    <div class="drawing-activity-name-titre2" id="titre">Regarde ce que tu dois faire aujourd'hui! </div>
+</section>
+    
+    
+<!-- Conteneur pour centrer l'iframe du Google Agenda -->
+<section class="container">
+    <div class="google-calendar-container">
+        <iframe src="https://calendar.google.com/calendar/embed?src=gerard.dupont1312%40gmail.com&ctz=Europe%2FParis" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+        <button id="quittButton" onclick="redirectWithId(`Accueil`)">Quitter</button> <!-- Bouton "Quitter" -->
+    </div>
+</section>
+
+<script> 
+function redirectWithId(str) {
+          const urlParams = new URLSearchParams(window.location.search);
+          const userId = urlParams.get('id');
+  
+          const redirectUrl = `${str}.html?id=${userId}`;
+  
+          window.location.href = redirectUrl;
+}
+</script>
+
+    
+</body>
+</html>

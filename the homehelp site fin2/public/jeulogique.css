@@ -1,0 +1,237 @@
+/* Styles de base */
+body, html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.drawing-activity-name {
+  min-height: 50px;
+  background-color: #fff;
+  padding: 5px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between; /* Espace les éléments pour mettre la maison à droite */
+  align-items: center;
+}
+
+.drawing-activity-name-titre {
+  font-size: 60px;
+  color: #00C4CC;
+  font-weight: bold;
+  margin-left: 20px; /* Espace entre le logo et le texte */
+  flex-grow: 1; /* Permet au texte de prendre tout l'espace disponible */
+}
+
+.logo {
+  flex-shrink: 0; /* Empêche le logo de rétrécir */
+}
+
+.game {
+  background-color: #b2dbe0;
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: 8px;
+  max-width: 100000px; /* Augmentation de la largeur maximale */
+}
+
+#consigne {
+  text-align: center;
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+#game-container {
+  text-align: center;
+  margin-top: 5px;
+}
+
+#flocon-image {
+  width: 200px; /* Réduire la largeur de l'image */
+  height: auto; /* Maintenir le rapport hauteur/largeur */
+}
+
+#branches-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.branch {
+  width: 100px;
+  height: 100px;
+  margin: 10px;
+  cursor: pointer;
+}
+
+#message {
+  font-size: 35px;
+}
+
+#buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 30px;
+  color: #fff;
+  background-color: #00C4CC;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  margin: 0 10px; /* Ajoute une marge entre les boutons */
+  font-weight: bold;
+}
+
+button:hover {
+  background-color: #0089A7; /* Change la couleur au survol */
+}
+
+#quitter-btn {
+  background-color: #20436d; /* Change la couleur du bouton Quitter */
+}
+#prochain-btn {
+  background-color: #096381; /* Change la couleur du bouton Quitter */
+}
+
+/* Media queries pour ajuster les styles pour les différentes tailles d'écran */
+@media (max-width: 1199px) {
+  .drawing-activity-name-titre {
+    font-size: 40px;
+    margin-bottom: 50px;
+  }
+
+  .drawing-activity-name {
+    min-height: 30px;
+    margin-top: 20px;
+  }
+
+  .game {
+    max-width: 90%;
+  }
+
+  #consigne {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+
+  #flocon-image {
+    width: 150px;
+  }
+
+  .branch {
+    width: 70px;
+    height: 70px;
+    margin: 5px;
+  }
+
+  #message {
+    font-size: 25px;
+  }
+
+  button {
+    padding: 5px 15px;
+    font-size: 25px;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 767px) {
+  .drawing-activity-name-titre {
+    font-size: 30px;
+    margin-bottom: 30px; /* Réduire l'espacement entre le titre et les éléments suivants */
+  }
+
+  .drawing-activity-name {
+    min-height: 30px;
+    margin-top: 10px; /* Réduire l'espacement entre le titre et l'élément précédent */
+  }
+
+  .game {
+    max-width: 90%;
+  }
+
+  #consigne {
+    font-size: 25px;
+    margin-bottom: 10px;
+  }
+
+  #flocon-image {
+    width: 120px; /* Réduire la taille de l'image */
+  }
+
+  .branch {
+    width: 60px; /* Réduire la taille des branches */
+    height: 60px;
+    margin: 5px;
+  }
+
+  #message {
+    font-size: 20px;
+  }
+
+  button {
+    padding: 5px 10px; /* Réduire l'espacement du bouton */
+    font-size: 20px;
+    margin: 0 5px;
+  }
+}
+
+@media (max-width: 575px) {
+  .drawing-activity-name-titre {
+    font-size: 25px;
+    margin-bottom: 20px; /* Réduire l'espacement entre le titre et les éléments suivants */
+  }
+
+  .drawing-activity-name {
+    min-height: 30px;
+    margin-top: 10px; /* Réduire l'espacement entre le titre et l'élément précédent */
+  }
+
+  .game {
+    max-width: 90%;
+  }
+
+  #consigne {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+
+  #flocon-image {
+    width: 100px; /* Réduire la taille de l'image */
+  }
+
+  .branch {
+    width: 50px; /* Réduire la taille des branches */
+    height: 50px;
+    margin: 5px;
+  }
+
+  #message {
+    font-size: 18px;
+  }
+
+  button {
+    padding: 5px 10px; /* Réduire l'espacement du bouton */
+    font-size: 18px;
+    margin: 0 5px;
+  }
+}

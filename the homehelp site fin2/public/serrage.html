@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serrage</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;800&display=swap');
+
+        body {
+            background: linear-gradient(45deg, rgba(66, 183, 245, 0.8) 0%, rgba(66, 245, 189, 0.4) 100%);
+            color: rgba(0, 0, 0, 0.6);
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+            line-height: 1.8em;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form {
+            position: relative;
+            background: #FFFFFF;
+            width: 600px;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+            box-sizing: border-box;
+            margin: 100px auto 10px;
+            overflow: hidden;
+            padding: 40px;
+        }
+
+        .form-header {
+            margin: 0 0 40px;
+            text-align: center;
+        }
+
+        .form-header h1 {
+            padding: 4px 0;
+            color: #4285F4;
+            font-size: 32px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin: 0 0 20px;
+        }
+
+        .form-group label {
+            margin: 0 0 10px;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: .2em;
+        }
+
+        .form-group input {
+            outline: none;
+            background: rgba(0, 0, 0, 0.1);
+            width: 100%;
+            border: 0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            padding: 14px 20px;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 18px;
+            font-weight: 500;
+            transition: 0.3s ease;
+        }
+
+        .form-group input:focus {
+            color: rgba(0, 0, 0, 0.8);
+        }
+
+        .form-group button {
+            outline: none;
+            background: #4285F4;
+            width: 100%;
+            border: 0;
+            border-radius: 4px;
+            padding: 14px 20px;
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .form-group button:hover {
+            background-color: darken(#4285F4, 10%);
+        }
+
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .form-footer button {
+            outline: none;
+            background: #FFFFFF;
+            border: 2px solid #4285F4;
+            border-radius: 4px;
+            padding: 10px 20px;
+            color: #4285F4;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .form-footer button:hover {
+            background-color: #4285F4;
+            color: #FFFFFF;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form">
+    <div class="form-header">
+        <h1>Serrage</h1>
+    </div>
+    <div class="form-content">
+        <form id="scoreForm">
+            <div class="form-group">
+                <label for="strength_score">Veuillez écrire votre score indiqué dans Processing:</label>
+                <input type="number" id="strength_score" name="strength_score" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Envoyer</button>
+            </div>
+        </form>
+    </div>
+    <div class="form-footer">
+        <button id="backButton">Retour</button>
+    </div>
+</div>
+
+<script>
+    document.getElementById('scoreForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        const strengthScore = document.getElementById('strength_score').value;
+
+        if (!userId) {
+            alert('ID utilisateur manquant dans l\'URL.');
+            return;
+        }
+
+        fetch(`http://172.20.10.9:3000/strength/${userId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ strength_score: strengthScore })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert('Erreur: ' + data.error);
+            } else {
+                alert('Données insérées avec succès.');
+            }
+        })
+        .catch(error => console.error('Erreur:', error));
+    });
+
+    document.getElementById('backButton').addEventListener('click', function() {
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        const redirectUrl = `Accueil.html?id=${userId}`;
+
+        window.location.href = redirectUrl;
+    });
+</script>
+
+</body>
+</html>

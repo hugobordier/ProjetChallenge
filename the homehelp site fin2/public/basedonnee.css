@@ -1,0 +1,230 @@
+/* design du container de toute l'activté de dessin */
+
+.drawing-activity-name-titre {
+  font-size: 50px;
+  margin-bottom: 5px;
+  color: #00C4CC;
+  font-weight: bold;
+}
+
+.drawing-activity-name {
+  min-height: 50px;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.drawing-activity-title {
+    display: flex;
+    flex-direction: line;
+    justify-content: center; /* Espace entre les éléments */
+    align-items: center; /* Centrer horizontalement */
+    min-height: 100px; /* Hauteur minimale de 500 pixels */
+    background-color: #f0f0f0; /* Couleur de fond gris clair */
+    text-align: center;
+    margin-top: 0px;
+    position: relative;
+}
+
+/* Section webcam et image */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* design section droite (webcam ) et gauche (image) */
+  .left-column, .right-column {
+    width: 48%;
+    background-color: #b2dbe0;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* design titre section droite (webcam ) et gauche (image) */
+  .left-text, .right-text {
+    margin-bottom: 10px;
+    font-size: 25px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+    /* design section gauche (image) */
+    #image-to-show {
+        max-width: 70%;
+        max-height: auto;
+        margin: 0 40px;
+    }
+
+  /* design section droite (webcam )*/
+  #webcam-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  canvas {
+    border-radius: 0;
+  }
+  
+    /* design des boutons */
+
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+  .button-container button {
+    background-color: #1f9cea;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 0px;
+    cursor: pointer;
+  }
+
+  .button-container button.next {
+    background-color: #096381;
+  }
+
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+  }
+
+   /* bouton quitter*/
+  .button-container button.quit {
+    background-color: #20436d;
+  }
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+  }
+
+  .button-container button.finish {
+    background-color: #105b91;
+  }
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+
+}
+
+/* design des buttons */
+
+.drawing-activity-button-init, .drawing-activity-button-predict {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #00C4CC;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    position: absolute;
+    bottom: 20px; /* Ajustez la position du bouton en bas */
+}
+.drawing-activity-button-init {
+    left: 60px; /* Position en bas à gauche */
+}
+.drawing-activity-button-predict {
+    right: 60px; /* Position en bas à droite */
+}
+
+.drawing-activity-button-recommencer , .drawing-activity-button-changer , .drawing-activity-button-quitter {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: #fff;
+    background-color: #00C4CC;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    position: absolute;
+    top: 20px; /* Ajustez la position du bouton en bas */
+}
+
+.drawing-activity-button-recommencer {
+    right: 400px; /* Position en bas à droite */
+}
+
+.drawing-activity-button-changer {
+    right: 200px; /* Position en bas à droite */
+}
+
+.drawing-activity-button-quitter {
+    right: 15px; /* Position en bas à droite */
+}
+
+/* Design des resultats */
+
+.drawing-activity-resultats {
+    min-height: 200px;
+    background-color: #E4F8F8;
+    padding: 20px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.drawing-activity-resultats-title {
+    font-size: 30px;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+/* Style pour le conteneur de la barre de progression */
+.progress-bar-container {
+    display: flex; /* Utiliser flexbox pour aligner les éléments */
+    justify-content: center; /* Centrer horizontalement les éléments */
+    align-items: center; /* Centrer verticalement les éléments */
+    margin-top: 20px; /* Espacement par rapport aux autres éléments */
+}
+
+/* Style pour la barre de progression */
+progress {
+    width: 400px; /* Largeur de la barre de progression */
+    height: 40px; /* Hauteur de la barre de progression */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: #00C4CC; /* Couleur de fond de la barre de progression */
+}
+
+
+/* Style pour le texte affiché à côté de la barre de progression */
+.progress-bar-container span {
+    margin-left: 10px; /* Espacement entre la barre de progression et le texte */
+    font-size: 18px; /* Taille de la police */
+}
+
+
+/* Style pour le conteneur des résultats */
+.result-container {
+    margin-top: 20px; /* Espacement par rapport aux autres éléments */
+    text-align: center; /* Centrer le texte horizontalement */
+}
+
+/* Style pour le texte affiché dans le conteneur des résultats */
+.result-text {
+    font-size: 30px; /* Taille de la police */
+    margin-bottom: 10px; /* Espacement entre chaque texte */
+}

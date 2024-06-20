@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>Activité audio</title>
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="test2.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="Audio">
+    <meta property="og:type" content="website">
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
+
+<!-- titre section webcam et image-->
+<section class="drawing-activity-name">
+    <img src="images/audioicone.png" width="100" height="100" class="logo">
+    <div class="drawing-activity-name-titre" id="titre">Activité audio </div>
+</section>
+
+<!-- Section webcam et image-->
+<div class="container">
+    <!-- Section image-->
+    <div class="left-column">
+        <div class="left-text">Écoute et répète cette phrase : </div>
+        <div id="phrase-display" class="phrase-display"></div>
+    </div>
+    <div class="button-container">
+        <button id="startButton" onclick="startListening()">Démarrer</button>
+        <button id="finishButton" class="finish" onclick="stopListening()">Stopper</button>
+        <button id="nextButton" onclick="nextModel()">Prochain</button> <!-- Bouton "prochain" -->
+        <button id="repeatButton" onclick="repeatPhrase()">Répéter</button> <!-- Bouton "Répéter" -->
+    </div>
+</div>
+
+<!-- Section resultats-->
+<section class="drawing-activity-resultats">
+    <div class="drawing-activity-resultats-title" id="titre">Résultats</div>
+    <div id="progress-bar" class="progress-bar"></div>
+    <div id="progress-label" class="progress-label">0%</div>
+    <div id="progress-message" class="progress-message"></div>
+    <button id="quittButton" data-href="Accueil.html">Quitter</button> <!-- Bouton "Quitter" -->
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.3.1/dist/tf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/speech-commands@0.4.0/dist/speech-commands.min.js"></script>
+<script type="text/javascript">
+    const modelURLs = [
+        "https://teachablemachine.withgoogle.com/models/WtMY7i0QE/",
+        // Ajoutez ici les URLs des autres modèles
+    ];
+
+    const phrases = [
+        "La voiture roule vite",
+        // Ajoutez ici les phrases pour les autres modèles
+    ];
+
+    let currentModelIndex = 0;
+
+    async function loadModel(index) {
+        const URL = modelURLs[index];
+        const checkpointURL = URL + "model.json";
+        const metadataURL = URL + "metadata.json";
+
+        const recognizer = speechCommands.create(
+            "BROWSER_FFT",
+            undefined,
+            checkpointURL,
+            metadataURL);
+
+        await recognizer.ensureModelLoaded();
+
+        return recognizer;
+    }
+
+    let recognizer;
+
+    async function startListening() {
+        recognizer = await loadModel(currentModelIndex);
+        const classLabels = recognizer.wordLabels();
+
+        recognizer.listen(result => {
+            const scores = result.scores;
+            let class2Score = 0;
+            const class2Index = classLabels.indexOf("Class 2");
+            if (class2Index !== -1) {
+                class2Score = scores[class2Index];
+            }
+            updateProgressBar(class2Score);
+        }, {
+            includeSpectrogram: true,
+            probabilityThreshold: 0.75,
+            invokeCallbackOnNoiseAndUnknown: true,
+            overlapFactor: 0.50
+        });
+
+        displayPhrase(currentModelIndex);
+    }
+
+    function stopListening() {
+        if (recognizer) {
+            recognizer.stopListening();
+        }
+    }
+
+    function nextModel() {
+        stopListening();
+        currentModelIndex = (currentModelIndex + 1) % modelURLs.length;
+        startListening();
+    }
+
+    function updateProgressBar(score) {
+        const progressBar = document.getElementById("progress-bar");
+        const progressWidth = score * 100 + "%";
+        progressBar.style.width = progressWidth;
+        const progressLabel = document.getElementById("progress-label");
+        progressLabel.textContent = (score * 100).toFixed(2) + "%";
+
+        let phrase; // Variable pour stocker la phrase correspondante
+
+        // Choisissez la phrase en fonction du pourcentage
+        if (score < 0.2) {
+            phrase = "Tu peux mieux faire!";
+        } else if (score < 0.4) {
+            phrase = "Continue tes efforts!";
+        } else if (score < 0.6) {
+            phrase = "C'est bien.";
+        } else if (score < 0.9) {
+            phrase = "C'est très bien !";
+        } else {
+            phrase = "C'est parfait!";
+        }
+
+        // Afficher la phrase
+        document.getElementById("progress-message").textContent = phrase;
+    }
+
+    function displayPhrase(index) {
+        const phrase = phrases[index];
+        document.getElementById("phrase-display").textContent = phrase;
+        speakPhrase(phrase); // Lire la phrase à voix haute
+    }
+
+    function speakPhrase(phrase) {
+        const preamble = "Écoute et répète cette phrase : ";
+        const utterance1 = new SpeechSynthesisUtterance(preamble);
+        const utterance2 = new SpeechSynthesisUtterance(phrase);
+        utterance1.lang = 'fr-FR';
+        utterance2.lang = 'fr-FR';
+        window.speechSynthesis.speak(utterance1);
+        window.speechSynthesis.speak(utterance2);
+    }
+
+    function repeatPhrase() {
+        const phrase = phrases[currentModelIndex];
+        speakPhrase(phrase);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        displayPhrase(currentModelIndex);
+    });
+</script>
+</body>
+</html>

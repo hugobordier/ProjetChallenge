@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <title>jeu de logique</title>
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="jeulogique.css" media="screen">
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org",
+            "@type": "Organization",
+            "name": ""
+        }
+    </script>
+    <meta name="theme-color" content="#478ac9">
+    <meta property="og:title" content="jeulogique">
+    <meta property="og:type" content="website">
+    <meta data-intl-tel-input-cdn-path="intlTelInput/">
+</head>
+<body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr">
+    <!-- titre section webcam et image-->
+    <section class="drawing-activity-name">
+        <div class="drawing-activity-name-titre" id="titre">Jeu de logique : </div>
+    </section>
+    <section class="game">
+        <div id="consigne">Sélectionnez la branche perdue</div>
+        <div id="game-container">
+            <img src="" alt="Flocon avec branche manquante" id="flocon-image">
+            <div id="branches-container">
+                <!-- Les branches seront générées dynamiquement ici -->
+            </div>
+        </div>
+        <div id="message"></div>
+    </section>
+    <div id="buttons-container">
+        <button id="prochain-btn">Prochain</button>
+        <button id="quitter-btn" onclick="redirectWithId(`Accueil`)">Quitter</button>
+    </div>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+        const floconImage = document.getElementById('flocon-image');
+        const branchesContainer = document.getElementById('branches-container');
+        const message = document.getElementById('message');
+        const prochainBtn = document.getElementById('prochain-btn');
+        const quitterBtn = document.getElementById('quitter-btn');
+
+        const floconsData = [
+            {
+                image: "flocon/flocon1vide.PNG",
+                branches: [
+                    { src: "flocon/branche1.PNG", correct: false },
+                    { src: "flocon/branche2.PNG", correct: false },
+                    { src: "flocon/branche3.PNG", correct: false },
+                    { src: "flocon/branche4.PNG", correct: false },
+                    { src: "flocon/branche5.PNG", correct: false },
+                    { src: "flocon/branche6.PNG", correct: false },
+                    { src: "flocon/branche7.PNG", correct: false },
+                    { src: "flocon/branche8.PNG", correct: true },
+                    { src: "flocon/branche9.PNG", correct: false },
+                    { src: "flocon/branche10.PNG", correct: false }
+                ]
+            },
+            {
+                image: "flocon/flocon2vide.PNG",
+                branches: [
+                    { src: "flocon/branche1.PNG", correct: false },
+                    { src: "flocon/branche2.PNG", correct: false },
+                    { src: "flocon/branche3.PNG", correct: false },
+                    { src: "flocon/branche4.PNG", correct: false },
+                    { src: "flocon/branche5.PNG", correct: false },
+                    { src: "flocon/branche6.PNG", correct: false },
+                    { src: "flocon/branche7.PNG", correct: false },
+                    { src: "flocon/branche8.PNG", correct: false },
+                    { src: "flocon/branche9.PNG", correct: true },
+                    { src: "flocon/branche10.PNG", correct: false }
+                ]
+            },
+            {
+                image: "flocon/flocon3vide.PNG",
+                branches: [
+                    { src: "flocon/branche1.PNG", correct: false },
+                    { src: "flocon/branche2.PNG", correct: false },
+                    { src: "flocon/branche3.PNG", correct: true },
+                    { src: "flocon/branche4.PNG", correct: false },
+                    { src: "flocon/branche5.PNG", correct: false },
+                    { src: "flocon/branche6.PNG", correct: false },
+                    { src: "flocon/branche7.PNG", correct: false },
+                    { src: "flocon/branche8.PNG", correct: false },
+                    { src: "flocon/branche9.PNG", correct: false },
+                    { src: "flocon/branche10.PNG", correct: false }
+                ]
+            }
+        ];
+
+        function afficherImageFlocon() {
+            let newIndex = Math.floor(Math.random() * floconsData.length);
+            let newFlocon = floconsData[newIndex];
+            floconImage.src = newFlocon.image;
+            initBranches(newFlocon.branches);
+        }
+
+        function initBranches(branchesData) {
+            branchesContainer.innerHTML = ''; // Nettoyer les branches existantes
+            branchesData.forEach((branchData, index) => {
+                let branch = document.createElement('img');
+                branch.src = branchData.src;
+                branch.classList.add('branch');
+                branch.setAttribute('data-correct', branchData.correct);
+                branch.setAttribute('data-index', index); // Ajouter un attribut data-index pour identifier la branche
+                branchesContainer.appendChild(branch);
+            });
+        }
+
+        // Afficher le flocon initial
+        afficherImageFlocon();
+
+        // Fonction pour vérifier si la branche sélectionnée est correcte ou non
+        function checkBranch(branch) {
+            const isCorrect = JSON.parse(branch.getAttribute('data-correct'));
+            if (isCorrect) {
+                message.textContent = "Félicitations ! Vous avez trouvé la bonne branche.";
+                floconImage.src = "flocon_full.jpg";
+                // Afficher le prochain flocon pour continuer le jeu
+                setTimeout(function() {
+                    afficherImageFlocon();
+                    message.textContent = ''; // Réinitialiser le message
+                }, 2000); // Temps d'attente en millisecondes avant d'afficher le prochain flocon (par exemple, 2 secondes ici)
+            } else {
+                message.textContent = "Ce n'est pas la bonne branche. Essayez à nouveau.";
+                branch.style.opacity = '0.5'; // Rendre la branche incorrecte grise en réduisant l'opacité
+                // Vous pouvez ajouter d'autres actions à effectuer lorsqu'une réponse est incorrecte
+            }
+        }
+
+        // Écoute des événements sur les branches
+        branchesContainer.addEventListener('click', function(event) {
+            if (event.target.classList.contains('branch')) {
+                const branch = event.target; // Obtenez la branche sur laquelle l'utilisateur a cliqué
+                checkBranch(branch);
+            }
+        });
+
+        // Écoute des touches du clavier pour sélectionner les branches
+        document.addEventListener('keydown', function(event) {
+            // Vérifier si la touche appuyée correspond à une branche
+            const key = parseInt(event.key);
+            if (!isNaN(key) && key >= 0 && key <= 9) { // Modifier la condition pour inclure 0 à 9
+                if (key === 0) {
+                    const branchIndex = 9; // Pour la branche 10, l'index est 9 dans un tableau (0-indexed)
+                    const branches = document.querySelectorAll('.branch');
+                    if (branchIndex >= 0 && branchIndex < branches.length) {
+                        const selectedBranch = branches[branchIndex];
+                        checkBranch(selectedBranch);
+                    }
+                } else {
+                    const branchIndex = key - 1; // Convertir la touche en index de tableau (0-indexed) pour 1 à 9
+                    const branches = document.querySelectorAll('.branch');
+                    if (branchIndex >= 0 && branchIndex < branches.length) {
+                        const selectedBranch = branches[branchIndex];
+                        checkBranch(selectedBranch);
+                    }
+                }
+            } else {
+                switch (event.key) {
+                    case 'ArrowRight':
+                        prochainBtn.click();
+                        break;
+                    case 'Escape':
+                        handleQuit();
+                        break;
+                    // Autres cas à gérer si nécessaire
+                }
+            }
+
+        });
+
+        // Écouteur d'événement pour le bouton "Prochain"
+        prochainBtn.addEventListener('click', function() {
+            afficherImageFlocon();
+            message.textContent = ''; // Réinitialiser le message
+        });
+
+        // Écouteur d'événement pour le bouton "Quitter"
+        quitterBtn.addEventListener('click', function() {
+            handleQuit();
+        });
+
+        // Fonction pour gérer le bouton "Quitter"
+
+    });
+
+    document.getElementById("quitButton").addEventListener("click", function() {
+        redirectWithId('Accueil');
+    });
+
+    function redirectWithId(str) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+        const redirectUrl = `${str}.html?id=${userId}`;
+        window.location.href = redirectUrl;
+    }
+
+        
+
+    </script>
+</body>
+  
+</html>

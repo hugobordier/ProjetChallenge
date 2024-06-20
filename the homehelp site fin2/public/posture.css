@@ -1,0 +1,142 @@
+.drawing-activity-name {
+  min-height: 50px;
+  background-color: #fff;
+  padding: 5px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between; /* Espace les éléments pour mettre la maison à droite */
+  align-items: center;
+}
+
+.drawing-activity-name-titre {
+  font-size: 60px;
+  margin-bottom: 0;
+  color: #00C4CC;
+  font-weight: bold;
+  margin-left: 20px; /* Espace entre le logo et le texte */
+  flex-grow: 1; /* Permet au texte de prendre tout l'espace disponible */
+}
+
+.logo {
+  flex-shrink: 0; /* Empêche le logo de rétrécir */
+}
+
+.maison {
+  flex-shrink: 0; /* Empêche la maison de rétrécir */
+}
+
+
+.levels-section {
+  background-image: none;
+  padding: 20px; /* Ajout d'une marge autour de la section */
+}
+
+.levels-section .container {
+  min-height: 400px;
+}
+
+.levels-section .main-title {
+  font-weight: 700;
+  font-size: 50px;
+  margin: 60px auto 0;
+  text-align: center; /* Centrer le titre */
+}
+
+.levels-section .level-list {
+  margin: 60px 0;
+  display: grid;
+  grid-auto-columns: calc(33.3333% - 20px);
+  grid-template-columns: repeat(3, calc(33.3333% - 20px));
+  min-height: 300px;
+  grid-gap: 30px;
+}
+
+.levels-section .level-item {
+  background-image: none;
+  box-shadow: 5px 5px 30px 0 rgba(0, 0, 0, 0.15);
+  padding: 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex; /* Ajouté pour centrer le contenu */
+  align-items: center; /* Centrage vertical */
+  justify-content: center; /* Centrage horizontal */
+  text-align: center; /* Centrage du texte */
+}
+
+.levels-section .level-item:nth-child(1) {
+  background-color: #7BE500; /* Couleur pour le niveau 1 */
+}
+
+.levels-section .level-item:nth-child(2) {
+  background-color: #FDB732; /* Couleur pour le niveau 2 */
+}
+
+.levels-section .level-item:nth-child(3) {
+  background-color: #EA1A2E; /* Couleur pour le niveau 3 */
+}
+
+.levels-section .level-item:hover {
+  background-color: #e0e0e0;
+}
+
+.levels-section .level-content {
+  display: flex;
+  align-items: center; /* Centrage vertical */
+  justify-content: center; /* Centrage horizontal */
+  height: 100%;
+  width: 100%;
+}
+
+.levels-section .level-title {
+  font-weight: 700;
+  font-size: 40px;
+  margin: 0;
+}
+
+/* Media queries pour les différentes tailles d'écran */
+@media (max-width: 1199px) {
+  .levels-section .main-title {
+    font-size: 2.25rem;
+  }
+
+  .levels-section .level-list {
+    grid-auto-columns: calc(33.333333333333336% - 20px);
+    grid-template-columns: repeat(3, calc(33.333333333333336% - 20px));
+    min-height: 463px;
+  }
+}
+
+@media (max-width: 767px) {
+  .levels-section .main-title {
+    font-size: 1.875rem;
+  }
+
+  .levels-section .level-list {
+    grid-auto-columns: calc(100% - 40px);
+    grid-template-columns: 100%;
+  }
+
+  .levels-section .level-item {
+    margin: 20px; /* Ajouter une marge pour les petits écrans */
+  }
+}
+
+@media (max-width: 575px) {
+  .levels-section .main-title {
+    font-size: 2.25rem;
+  }
+
+  .levels-section .level-list {
+    grid-auto-columns: 100%;
+  }
+
+  .levels-section .level-item {
+    margin: 20px; /* Ajouter une marge pour les très petits écrans */
+  }
+}
+
+/* Styles pour la section 2 - Ajout de sections supplémentaires */
+.section-2 .container {
+  min-height: 400px;
+}

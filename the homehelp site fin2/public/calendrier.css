@@ -1,0 +1,73 @@
+.u-section-1 .u-sheet-1 {
+  min-height: 900px;
+}
+
+.drawing-activity-name-titre {
+  font-size: 60px;
+  margin-bottom: 5px;
+  color: #00C4CC;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.drawing-activity-name {
+  min-height: 50px;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+  margin-top: 5px;
+}
+
+.drawing-activity-name-titre2 {
+  font-size: 40px;
+  margin-bottom: 0px;
+  color:black;
+}
+
+
+.google-calendar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  min-height: 200px;
+  background-color: #b2dbe0;
+  text-align: center;
+  margin-top: 500px;
+  margin-right: 10px; /* Ajout de marge à droite */
+  border-radius: 15px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  max-width: 90%;
+  margin: 0 auto; /* Combinaison de la marge supérieure et de la centrage horizontal */
+  
+}
+.google-calendar-container iframe {
+  width: 60%;
+  height: 550px; /* Ajustez la hauteur selon vos besoins */
+  border: 0;
+}
+
+#quittButton {
+  padding: 10px 20px; /* Réduction du padding */
+  font-size: 30px; /* Taille de la police */
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  background-color: #20436d;
+  font-weight: bold;
+  margin-bottom: 30px;
+  position: absolute; /* Positionnement absolu */
+  top: 500px; /* Ajustez selon votre besoin */
+  right: 30px; /* Placez le bouton à 20px du bord droit */
+}
+
+#rectangle {
+  width: 100px;
+  height: 50px;
+}
+
+
+
+

@@ -1,0 +1,189 @@
+/* design du container de toute l'activté de dessin */
+
+.drawing-activity-name {
+  min-height: 50px;
+  background-color: #fff;
+  padding: 5px;
+  margin-top: 20px;
+  margin-left: 370px;
+  display: flex;
+  justify-content: space-between; /* Espace les éléments pour mettre la maison à droite */
+  align-items: center;
+}
+
+.drawing-activity-name-titre {
+  font-size: 100px;
+  margin-bottom: 0;
+  color: #00C4CC;
+  font-weight: bold;
+  margin-left: 20px; /* Espace entre le logo et le texte */
+  flex-grow: 1; /* Permet au texte de prendre tout l'espace disponible */
+}
+
+.logo {
+  flex-shrink: 0; /* Empêche le logo de rétrécir */
+}
+
+/* Section webcam et image */
+.container {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  /* design section droite (webcam ) et gauche (image) */
+  .left-column, .right-column {
+    width: 48%;
+    background-color: #b2dbe0;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* design titre section droite (webcam ) et gauche (image) */
+  .left-text, .right-text {
+    margin-bottom: 10px;
+    font-size: 35px;
+    font-weight: bold;
+    text-align: center;
+  }
+
+    /* design section gauche (image) */
+    #image-to-show {
+        max-width: 70%;
+        max-height: auto;
+        margin: 0 40px;
+    }
+
+  /* design section droite (webcam )*/
+  #webcam-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+
+  canvas {
+    border-radius: 0;
+  }
+  
+    /* design des boutons */
+
+
+  .button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .button-container button {
+    background-color: #1f9cea;
+    border: none;
+    color: white;
+    padding: 10px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block; 
+    font-size: 30px;
+    margin: 4px 2px;
+    border-radius: 0px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+ /* bouton prochain*/
+  .button-container button.next {
+    background-color: #096381;
+
+    margin-top : 0px;
+  }
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+  }
+
+   /* bouton quitter*/
+  .button-container button.quit {
+    background-color: #20436d;
+    margin-top: 0px;
+  }
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+  }
+
+   /* bouton j'ai fini*/
+  .button-container button.finish {
+    background-color: #105b91;
+  }
+  #rectangle {
+    width  : 100px;
+    height : 50px;
+
+}
+
+/* Design des resultats */
+
+.drawing-activity-resultats {
+    min-height: 400px;
+    background-color: #E4F8F8;
+    padding: 10px;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.drawing-activity-resultats-title {
+    font-size: 35px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    margin-top : 50px;
+}
+
+/* Style pour le conteneur de la barre de progression */
+.progress-bar-container {
+    display: flex; /* Utiliser flexbox pour aligner les éléments */
+    justify-content: center; /* Centrer horizontalement les éléments */
+    align-items: center; /* Centrer verticalement les éléments */
+    margin-top: 10px; /* Espacement par rapport aux autres éléments */
+}
+
+/* Style pour la barre de progression */
+progress {
+    width: 400px; /* Largeur de la barre de progression */
+    height: 40px; /* Hauteur de la barre de progression */
+    border-radius: 5px; /* Coins arrondis */
+    background-color: #00C4CC; /* Couleur de fond de la barre de progression */
+}
+
+/* Style pour le texte affiché à côté de la barre de progression */
+.progress-bar-container span {
+    margin-left: 10px; /* Espacement entre la barre de progression et le texte */
+    font-size: 30px; /* Taille de la police */
+}
+
+/* Style pour le texte affiché dans le conteneur des résultats */
+.progress-bar{
+  font-size: 30px; /* Taille de la police */
+  margin-bottom: 10px; /* Espacement entre chaque texte */
+}
+
+/* Style pour le texte affiché dans le conteneur des résultats */
+.progress-text{
+    font-size: 30px; /* Taille de la police */
+    margin-bottom: 10px; /* Espacement entre chaque texte */
+}
+
+#resultContainer{
+  font-size: 30px; /* Taille de la police */
+  margin-top: 10px; /* Espacement entre chaque texte */
+}
+#label-container{
+  font-size: 30px; /* Taille de la police */
+  margin-bottom: 10px; /* Espacement entre chaque texte */
+}

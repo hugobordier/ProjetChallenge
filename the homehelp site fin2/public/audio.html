@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html style="font-size: 16px;" lang="fr"><head>
+
+  <!-- Balises meta pour le design responsive et l'encodage des caractères -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+
+    <!-- Balises meta pour le SEO (actuellement vides) -->
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+
+    <!-- Titre de la page -->
+    <title>Audio</title>
+
+    <!-- Liens vers des fichiers CSS externes pour le style -->
+    <link rel="stylesheet" href="nicepage.css" media="screen">
+    <link rel="stylesheet" href="audio.css" media="screen">
+
+    <!-- Fichiers JavaScript à charger après l'analyse du HTML -->
+    <script class="u-script" type="text/javascript" src="jquery.js" defer=""></script>
+    <script class="u-script" type="text/javascript" src="nicepage.js" defer=""></script>
+
+    <!-- Balise meta pour spécifier le générateur de la page -->
+    <meta name="generator" content="Nicepage 6.10.5, nicepage.com">
+
+    <!-- Google Fonts pour des styles de police personnalisés -->
+    <link id="u-theme-google-font" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i|Open+Sans:300,300i,400,400i,500,500i,600,600i,700,700i,800,800i">
+    
+    <!-- Données structurées pour le SEO -->
+    <script type="application/ld+json">{
+		"@context": "http://schema.org",
+		"@type": "Organization",
+		"name": ""
+}</script>
+    <!-- Balise meta pour la couleur du thème des navigateurs -->
+    <meta name="theme-color" content="#478ac9">
+
+    <!-- Balises Open Graph pour le partage sur les réseaux sociaux -->
+    <meta property="og:title" content="Dessin">
+    <meta property="og:type" content="website">
+
+  <!-- Placeholder pour le plugin d'entrée de téléphone international -->
+  <meta data-intl-tel-input-cdn-path="intlTelInput/"></head>
+
+  
+  <body data-path-to-root="./" data-include-products="false" class="u-body u-xl-mode" data-lang="fr"><header class="u-clearfix u-header u-header" id="sec-9a72"><div class="u-clearfix u-sheet u-sheet-1">
+    
+    <!-- titre section webcam et image-->
+<section class="drawing-activity-name">
+    <img src="images/logopc.jpg" width="200" height="200" class="logo">
+  <div class="drawing-activity-name-titre" id="titre">Audio</div>
+  <img src="images/maison.png" onclick="redirectWithId(`Accueil`)" alt="logo" class="logo" width="50" height="50">
+</section>
+
+      <!-- Tableau niveau -->
+      <section class="levels-section">
+        <div class="container">
+          <h2 class="main-title">Choisis ton niveau !</h2>
+          <div class="level-list">
+            <div class="level-item" onclick="redirectWithId(`niveau1audio`)">
+              <div class="level-content">
+                <h6 class="level-title">Niveau</h6>
+                <img src="images/1.png" alt="logo" class="logo" width="100" height="100">
+              </div>
+            </div>
+            <div class="level-item" onclick="redirectWithId(`niveau2audio`)">
+              <div class="level-content">
+                <h6 class="level-title">Niveau</h6>
+                <img src="images/2.png" alt="logo" class="logo" width="100" height="100">
+              </div>
+            </div>
+            <div class="level-item" onclick="redirectWithId(`niveau3audio`)">
+              <div class="level-content">
+                <h6 class="level-title">Niveau</h6>
+                <img src="images/3.png" alt="logo" class="logo" width="100" height="100">
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+</body>
+<script>
+  document.addEventListener('keydown', function(event) {
+    // Check if the key pressed is '1', '2', or '3'
+    if (event.key === '1') {
+      redirectToLevel('niveau1audio');
+    } else if (event.key === '2') {
+      redirectToLevel('niveau2audio');
+    } else if (event.key === '3') {
+      redirectToLevel('niveau3audio');
+    }
+  });
+
+  function redirectToLevel(levelId) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id');
+    const redirectUrl = `${levelId}.html?id=${userId}`;
+    window.location.href = redirectUrl;
+  }
+
+  function redirectWithId(str) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const userId = urlParams.get('id');
+
+        const redirectUrl = `${str}.html?id=${userId}`;
+        console.log(redirectUrl);
+        window.location.href = redirectUrl;
+    } 
+</script>
+</html>
