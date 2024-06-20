@@ -186,7 +186,7 @@
         const currentModel = models[modelIndex];
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id');
-        const response = await fetch(`http://172.20.10.9:3000/posture/${userId}`, {
+        const response = await fetch(`http://localhost:3000/posture/${userId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

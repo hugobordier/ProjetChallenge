@@ -198,7 +198,7 @@
         // Fonction pour envoyer les résultats au serveur
         async function saveResult(modelName, probability) {
 
-            const response = await fetch('http://172.20.10.9:3000/tangram/1', { // Remplacez par l'URL de votre serveur
+            const response = await fetch('http://localhost:3000/tangram/1', { // Remplacez par l'URL de votre serveur
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

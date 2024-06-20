@@ -98,7 +98,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
     const user_email = document.getElementById('user_email').value;
     const user_password = document.getElementById('user_password').value;
 
-    const url = 'http://172.20.10.9:3000/user'; // a changer selon le wifi et l'appareil
+    const url = 'http://localhost:3000/user'; // a changer selon le wifi et l'appareil
     const response = await fetch(url, {
         method: 'GET',
         headers: {

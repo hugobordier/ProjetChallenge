@@ -229,7 +229,7 @@
       async function displayAverages() {
         const urlParams = new URLSearchParams(window.location.search);
         const userId = urlParams.get('id');
-        const url = 'http://172.20.10.9:3000/temperature/' + userId;
+        const url = 'http://localhost:3000/temperature/' + userId;
         const data = await fetchData(url);
 
         if (data) {
@@ -281,7 +281,7 @@
       window.onload = displayAverages;
 
       async function redirectAtAccueil() {
-        const url = 'http://172.20.10.9:3000/user'; // URL de l'API, à changer selon votre configuration
+        const url = 'http://localhost:3000/user'; // URL de l'API, à changer selon votre configuration
         const response = await fetch(url, {
           method: 'GET',
           headers: {

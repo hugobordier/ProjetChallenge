@@ -87,7 +87,7 @@ document.getElementById('registerForm').addEventListener('submit', async (e) => 
     const user_email = document.getElementById('user_email').value;
     const user_prenom = document.getElementById('user_prenom').value;
 
-    const response = await fetch('http://172.20.10.9:3000/user', {  
+    const response = await fetch('http://localhost:3000/user', {  
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
